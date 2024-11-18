@@ -4,24 +4,37 @@ class NavBarTop extends StatelessWidget {
   const NavBarTop({super.key});
   @override
   Widget build(BuildContext context) {
-    return const Row(
+    return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
-        Text(
-          "App",
-          style: TextStyle(color: Colors.white, fontSize: 16),
+        TextButton(
+          onPressed: () {},
+          child: Image.asset(
+            "assets/logo.png",
+            height: 40,
+            width: 40,
+          ),
         ),
-        Text(
-          "Actividades",
-          style: TextStyle(color: Colors.white, fontSize: 16),
+        TextButton(
+          onPressed: () {},
+          child: Text(
+            "Actividades",
+            style: TextStyle(color: Colors.white, fontSize: 16),
+          ),
         ),
-        Text(
-          "Regalos",
-          style: TextStyle(color: Colors.white, fontSize: 16),
+        TextButton(
+          onPressed: () {},
+          child: Text(
+            "Regalos",
+            style: TextStyle(color: Colors.white, fontSize: 16),
+          ),
         ),
-        Text(
-          "Mi lista",
-          style: TextStyle(color: Colors.white, fontSize: 16),
+        TextButton(
+          onPressed: () {},
+          child: Text(
+            "Mi lista",
+            style: TextStyle(color: Colors.white, fontSize: 16),
+          ),
         ),
       ],
     );
