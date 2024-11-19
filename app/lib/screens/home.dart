@@ -1,6 +1,6 @@
 import 'package:app/models/products.dart';
 import 'package:app/utils/data.dart';
-import 'package:app/utils/getProducts.dart';
+import 'package:app/utils/api.dart';
 import 'package:app/widgets/circle_item.dart';
 import 'package:app/widgets/image_item.dart';
 import 'package:app/widgets/main_card.dart';
@@ -53,7 +53,7 @@ class _HomePage extends State<HomePage> {
         index: _selectedIndex, // Muestra la sección correspondiente al índice
         children: <Widget>[
           homePageBody(), // Página de inicio
-          searchPageBody(), // Página de búsqueda
+          //searchPageBody(), // Página de búsqueda
           cartPageBody(), // Página del carrito
         ],
       ),

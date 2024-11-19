@@ -25,6 +25,11 @@ app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/usuarios-has-productos', usuariosHasProductosRoutes);
 app.use('/api/usuarios-has-servicios', usuariosHasServiciosRoutes);
 
-// Inicio del servidor
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Servidor corriendo en http://localhost:${PORT}`));
+// Exporta la app para usarla en pruebas
+module.exports = app;
+
+// Inicia el servidor solo si no está en modo de prueba
+if (process.env.NODE_ENV !== 'test') {
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => console.log(`Servidor corriendo en http://localhost:${PORT}`));
+}

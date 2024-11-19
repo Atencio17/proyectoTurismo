@@ -1,6 +1,6 @@
 import 'package:app/models/products.dart';
 import 'package:app/screens/home.dart';
-import 'package:app/utils/getProducts.dart';
+import 'package:app/utils/api.dart';
 import 'package:app/widgets/buttons.dart';
 import 'package:flutter/material.dart';
 
