@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Productos</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="row">
+            <!-- Formulario -->
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5>Datos del Producto</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="productForm">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Nombre:</label>
+                                <input type="text" class="form-control" id="name" placeholder="Nombre del producto">
+                            </div>
+                            <div class="mb-3">
+                                <label for="detail" class="form-label">Detalle:</label>
+                                <input type="text" class="form-control" id="detail" placeholder="Detalle del producto">
+                            </div>
+                            <div class="mb-3">
+                                <label for="image" class="form-label">Imagen (URL):</label>
+                                <input type="text" class="form-control" id="image" placeholder="URL de la imagen">
+                            </div>
+                            <div class="mb-3">
+                                <label for="category" class="form-label">Categoría:</label>
+                                <input type="text" class="form-control" id="category"
+                                    placeholder="Categoría del producto">
+                            </div>
+                            <div class="mb-3">
+                                <label for="type" class="form-label">Tipo:</label>
+                                <input type="text" class="form-control" id="type" placeholder="Tipo de producto">
+                            </div>
+                            <div class="mb-3">
+                                <label for="price" class="form-label">Precio:</label>
+                                <input type="number" step="0.01" class="form-control" id="price" placeholder="Precio">
+                            </div>
+                            <button type="button" class="btn btn-success w-100" id="saveButton">Guardar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- Tabla -->
+            <div class="col-md-8">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5>Lista de Productos</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Detalle</th>
+                                    <th>Imagen</th>
+                                    <th>Categoría</th>
+                                    <th>Tipo</th>
+                                    <th>Precio</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productTable">
+                                <!-- Filas dinámicas -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const apiUrl = 'http://localhost:3000/api/productos'; // Cambia esta URL por la de tu API
+        let selectedProductId = null; // Variable para almacenar el ID del producto seleccionado
+
+        // Función para obtener los productos de la API
+        async function fetchProducts() {
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                const tableBody = document.getElementById('productTable');
+                tableBody.innerHTML = ''; // Limpiar la tabla antes de agregar nuevos datos
+
+                data.forEach(product => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${product.idProducto}</td>
+                        <td>${product.nombre}</td>
+                        <td>${product.detalle || '-'}</td>
+                        <td><img src="${product.imagen || 'https://via.placeholder.com/50'}" alt="Imagen" width="50"></td>
+                        <td>${product.categoria || '-'}</td>
+                        <td>${product.tipo || '-'}</td>
+                        <td>${product.precio.toFixed(2)}</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm me-2 selectButton" data-id="${product.idProducto}">Seleccionar</button>
+                            <button class="btn btn-danger btn-sm deleteButton" data-id="${product.idProducto}">Borrar</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+
+                addTableEventListeners(); // Agregar eventos para los botones de acción
+            } catch (error) {
+                console.error('Error al obtener los productos:', error);
+            }
+        }
+
+        // Función para agregar los event listeners a los botones de la tabla
+        function addTableEventListeners() {
+            document.querySelectorAll('.selectButton').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const productId = e.target.getAttribute('data-id');
+                    loadProductData(productId); // Cargar los datos del producto en el formulario
+                });
+            });
+
+            // Añadir evento al botón de eliminar
+            document.querySelectorAll('.deleteButton').forEach(button => {
+                button.addEventListener('click', async (e) => {
+                    const productId = e.target.getAttribute('data-id');
+                    if (confirm('¿Estás seguro de que quieres borrar este producto?')) {
+                        try {
+                            const response = await fetch(`${apiUrl}/${productId}`, {
+                                method: 'DELETE'
+                            });
+
+                            const result = await response.json();
+                            if (response.ok) {
+                                alert(result.message); // Mensaje de éxito
+                                fetchProducts(); // Recargar los productos
+                            } else {
+                                alert(result.error || 'Error al borrar el producto');
+                            }
+                        } catch (error) {
+                            console.error('Error al eliminar el producto:', error);
+                            alert('Hubo un error al eliminar el producto');
+                        }
+                    }
+                });
+            });
+        }
+
+        // Función para cargar los datos del producto en el formulario
+        async function loadProductData(productId) {
+            try {
+                const response = await fetch(`${apiUrl}/${productId}`);
+                const product = await response.json();
+
+                if (product) {
+                    // Llenar los campos del formulario con los datos del producto seleccionado
+                    document.getElementById('name').value = product.nombre;
+                    document.getElementById('detail').value = product.detalle;
+                    document.getElementById('image').value = product.imagen;
+                    document.getElementById('category').value = product.categoria;
+                    document.getElementById('type').value = product.tipo;
+                    document.getElementById('price').value = product.precio;
+                    selectedProductId = product.idProducto; // Guardar el ID del producto seleccionado
+                }
+            } catch (error) {
+                console.error('Error al cargar los datos del producto:', error);
+            }
+        }
+
+        // Llamar a la función al cargar la página
+        window.onload = fetchProducts;
+
+        // Función para guardar o actualizar un producto
+        document.getElementById('saveButton').addEventListener('click', async () => {
+            const name = document.getElementById('name').value;
+            const detail = document.getElementById('detail').value;
+            const image = document.getElementById('image').value;
+            const category = document.getElementById('category').value;
+            const type = document.getElementById('type').value;
+            const price = document.getElementById('price').value;
+
+            if (name && price) {
+                // Crear el objeto producto
+                const productData = {
+                    nombre: name,
+                    detalle: detail,
+                    imagen: image,
+                    categoria: category,
+                    tipo: type,
+                    precio: parseFloat(price)
+                };
+
+                try {
+                    let response;
+                    if (selectedProductId) {
+                        // Si hay un ID de producto seleccionado, actualizar
+                        response = await fetch(`${apiUrl}/${selectedProductId}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(productData)
+                        });
+                    } else {
+                        // Si no hay ID, agregar un nuevo producto
+                        response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(productData)
+                        });
+                    }
+
+                    const result = await response.json();
+                    if (response.ok) {
+                        alert(result.message || 'Producto guardado exitosamente');
+                        fetchProducts(); // Recargar la lista de productos
+                        document.getElementById('productForm').reset(); // Limpiar formulario
+                        selectedProductId = null; // Resetear ID de producto
+                    } else {
+                        alert(result.error || 'Hubo un error al guardar el producto');
+                    }
+                } catch (error) {
+                    console.error('Error al guardar el producto:', error);
+                    alert('Hubo un error al guardar el producto');
+                }
+            } else {
+                alert('Por favor, ingrese los datos obligatorios.');
+            }
+        });
+    </script>
+</body>
+
+</html>
