@@ -18,7 +18,7 @@ Widget recommendation() {
   return Stack(
     children: <Widget>[
       Image.network(
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Cabo_San_Juan%2C_Colombia.jpg/1200px-Cabo_San_Juan%2C_Colombia.jpg",
+        "https://artesaniasdecolombia.com.co/Documentos/Contenido/42960_imagen_pequena_nota_cierre_folkart-01.jpg",
         height: 350,
         fit: BoxFit.cover,
       ),
@@ -48,7 +48,7 @@ Widget info() {
     mainAxisAlignment: MainAxisAlignment.center,
     children: <Widget>[
       Text(
-        "Playas",
+        "Artesanías",
         style: TextStyle(color: Colors.white, fontSize: 10),
       ),
       SizedBox(
@@ -63,7 +63,7 @@ Widget info() {
         width: 6,
       ),
       Text(
-        "Surf",
+        "Cultura",
         style: TextStyle(color: Colors.white, fontSize: 10),
       ),
       SizedBox(
@@ -78,23 +78,11 @@ Widget info() {
         width: 6,
       ),
       Text(
-        "Gastronomia",
+        "Ancestrales",
         style: TextStyle(color: Colors.white, fontSize: 10),
       ),
       SizedBox(
         width: 6,
-      ),
-      Icon(
-        Icons.fiber_manual_record,
-        color: Colors.red,
-        size: 5,
-      ),
-      SizedBox(
-        width: 6,
-      ),
-      Text(
-        "Artesanias",
-        style: TextStyle(color: Colors.white, fontSize: 10),
       ),
     ],
   );

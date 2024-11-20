@@ -28,9 +28,9 @@ class _HomePage extends State<HomePage> {
 
   void getData() async {
     List<Product> auxG =
-        await ProductService().getProductsByCategory("Gastronomía");
-    List<Product> auxA =
         await ProductService().getProductsByCategory("Artesanía");
+    List<Product> auxA =
+        await ProductService().getProductsByCategory("Hamacas");
     setState(() {
       listaGastronomia = auxG;
       listaArtesanias = auxA;
@@ -90,11 +90,11 @@ class _HomePage extends State<HomePage> {
         SizedBox(height: 10),
         listaGastronomia.isEmpty
             ? Center(child: CircularProgressIndicator())
-            : horizontalList("Gastronomía", listaGastronomia, 1),
+            : horizontalList("Artesanía", listaGastronomia, 1),
         SizedBox(height: 10),
         listaArtesanias.isEmpty
             ? Center(child: CircularProgressIndicator())
-            : horizontalList("Artesanía", listaArtesanias, 1),
+            : horizontalList("Hamacas", listaArtesanias, 1),
         SizedBox(height: 20),
       ],
     );

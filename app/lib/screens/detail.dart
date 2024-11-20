@@ -47,9 +47,9 @@ class _DetailScreen extends State<DetailScreen> {
 
   void getData() async {
     List<Product> auxG =
-        await ProductService().getProductsByCategory("Gastronomía");
-    List<Product> auxA =
         await ProductService().getProductsByCategory("Artesanía");
+    List<Product> auxA =
+        await ProductService().getProductsByCategory("Hamacas");
     setState(() {
       listaConcatenada = auxA + auxG;
       listaConcatenada.shuffle();
