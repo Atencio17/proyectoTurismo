@@ -4,16 +4,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class CircleItem extends StatelessWidget {
-  const CircleItem(
-      {super.key,
-      required this.description,
-      required this.imageUrl,
-      required this.title,
-      required this.precio});
+  const CircleItem({
+    super.key,
+    required this.description,
+    required this.imageUrl,
+    required this.title,
+    required this.precio,
+    required this.id,
+    required this.idUser,
+  });
   final String title;
   final String description;
   final String imageUrl;
   final String precio;
+  final int id;
+  final int idUser;
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -27,6 +32,8 @@ class CircleItem extends StatelessWidget {
                 description: description,
                 imageUrl: imageUrl,
                 precio: precio,
+                id: id,
+                idUser: idUser,
               );
             },
           ),

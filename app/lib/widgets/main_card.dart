@@ -8,7 +8,6 @@ class MainCard extends StatelessWidget {
       children: <Widget>[
         recommendation(),
         info(),
-        buttonsAction(),
       ],
     );
   }
@@ -18,7 +17,7 @@ Widget recommendation() {
   return Stack(
     children: <Widget>[
       Image.network(
-        "https://artesaniasdecolombia.com.co/Documentos/Contenido/42960_imagen_pequena_nota_cierre_folkart-01.jpg",
+        "https://www.viveelmeta.com/wp-content/uploads/2021/01/cierran-fruver-3954.jpg",
         height: 350,
         fit: BoxFit.cover,
       ),
@@ -48,8 +47,8 @@ Widget info() {
     mainAxisAlignment: MainAxisAlignment.center,
     children: <Widget>[
       Text(
-        "Artesanías",
-        style: TextStyle(color: Colors.white, fontSize: 10),
+        "Frutas",
+        style: TextStyle(color: Colors.white, fontSize: 12),
       ),
       SizedBox(
         width: 6,
@@ -63,8 +62,8 @@ Widget info() {
         width: 6,
       ),
       Text(
-        "Cultura",
-        style: TextStyle(color: Colors.white, fontSize: 10),
+        "Verduras",
+        style: TextStyle(color: Colors.white, fontSize: 12),
       ),
       SizedBox(
         width: 6,
@@ -78,69 +77,27 @@ Widget info() {
         width: 6,
       ),
       Text(
-        "Ancestrales",
-        style: TextStyle(color: Colors.white, fontSize: 10),
+        "Semillas",
+        style: TextStyle(color: Colors.white, fontSize: 12),
+      ),
+      SizedBox(
+        width: 6,
+      ),
+      Icon(
+        Icons.fiber_manual_record,
+        color: Colors.red,
+        size: 5,
+      ),
+      SizedBox(
+        width: 6,
+      ),
+      Text(
+        "Carnes",
+        style: TextStyle(color: Colors.white, fontSize: 12),
       ),
       SizedBox(
         width: 6,
       ),
     ],
-  );
-}
-
-Widget buttonsAction() {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 15),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: <Widget>[
-        const Column(
-          children: [
-            Icon(
-              Icons.check,
-              color: Colors.white,
-            ),
-            SizedBox(
-              height: 3,
-            ),
-            Text(
-              "Mi lista",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 10,
-              ),
-            )
-          ],
-        ),
-        TextButton.icon(
-          onPressed: () {},
-          icon: Icon(
-            Icons.touch_app,
-            color: Colors.black,
-          ),
-          label: const Text("Observar"),
-          style: const ButtonStyle(
-              backgroundColor: MaterialStatePropertyAll(Colors.white)),
-        ),
-        const Column(
-          children: [
-            Icon(
-              Icons.info_outline,
-              color: Colors.white,
-            ),
-            SizedBox(
-              height: 3,
-            ),
-            Text(
-              "Informacion",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 10,
-              ),
-            )
-          ],
-        )
-      ],
-    ),
   );
 }

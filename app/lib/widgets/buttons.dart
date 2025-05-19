@@ -1,17 +1,25 @@
+import 'package:app/utils/api.dart';
 import 'package:app/utils/data.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class Buttons extends StatefulWidget {
   final String title;
   final String description;
   final String imageUrl;
   final String precio;
+  final int id;
+  final int idUser;
+
   const Buttons({
     Key? key,
     required this.title,
     required this.description,
     required this.imageUrl,
     required this.precio,
+    required this.id,
+    required this.idUser,
   }) : super(key: key);
 
   @override
@@ -26,38 +34,31 @@ class _ButtonsState extends State<Buttons> {
   final Color mintGreen = Color(0xFF3EB489);
 
   @override
-  Widget build(BuildContext context) {
-    final item = {
-      'title': widget.title,
-      'description': widget.description,
-      'imageUrl': widget.imageUrl,
-      'price': widget.precio.toString()
-    };
+  void initState() {
+    super.initState();
+    _loadInitialStates();
+  }
 
-    void toggleItem({
-      required bool isActive,
-      required void Function(Map<String, dynamic>) addAction,
-      required void Function(Map<String, dynamic>) removeAction,
-      required String addMessage,
-      required String removeMessage,
-    }) {
-      setState(() {
-        isActive = !isActive;
-      });
+  Future<void> _loadInitialStates() async {
+    try {
+      bool favorite =
+          await ProductService().isFavorite(widget.idUser, widget.id);
+      bool inCart = await ProductService().isInCart(widget.idUser, widget.id);
 
-      if (isActive) {
-        addAction(item);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(addMessage)),
-        );
-      } else {
-        removeAction(item);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(removeMessage)),
-        );
+      // Verificar si el widget sigue montado antes de llamar a setState
+      if (mounted) {
+        setState(() {
+          isFavorite = favorite;
+          isInCart = inCart;
+        });
       }
+    } catch (e) {
+      print('Error al cargar los estados iniciales: $e');
     }
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
@@ -65,17 +66,31 @@ class _ButtonsState extends State<Buttons> {
         Column(
           children: [
             IconButton(
-              onPressed: () {
-                toggleItem(
-                  isActive: isFavorite,
-                  addAction: AppData.addToFavorites,
-                  removeAction: AppData.removeFromFavorites,
-                  addMessage: '${widget.title} añadido a Favoritos',
-                  removeMessage: '${widget.title} eliminado de Favoritos',
-                );
-                setState(() {
-                  isFavorite = !isFavorite;
-                });
+              onPressed: () async {
+                // Lógica para manejar favoritos similar al carrito
+                final bool isCurrentlyFavorite = isFavorite;
+                final actionMessage = isCurrentlyFavorite
+                    ? '${widget.title} eliminado de Favoritos'
+                    : '${widget.title} añadido a Favoritos';
+
+                final bool result = isCurrentlyFavorite
+                    ? await ProductService()
+                        .removeFromFavorites(widget.idUser, widget.id)
+                    : await ProductService()
+                        .createLike(widget.idUser, widget.id);
+
+                if (result) {
+                  setState(() {
+                    isFavorite = !isCurrentlyFavorite;
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(actionMessage)),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error al actualizar Favoritos')),
+                  );
+                }
               },
               icon: Icon(
                 isFavorite ? Icons.favorite : Icons.favorite_border_rounded,
@@ -93,24 +108,95 @@ class _ButtonsState extends State<Buttons> {
           children: [
             IconButton(
               onPressed: () {
-                toggleItem(
-                  isActive: isInCart,
-                  addAction: AppData.addToCart,
-                  removeAction: AppData.removeFromCart,
-                  addMessage: '${widget.title} añadido al Carrito',
-                  removeMessage: '${widget.title} eliminado del Carrito',
+                showModalBottomSheet(
+                  context: context,
+                  builder: (BuildContext context) {
+                    int selectedQuantity = 1;
+
+                    return StatefulBuilder(
+                      builder: (BuildContext context, StateSetter setState) {
+                        return Container(
+                          padding: EdgeInsets.all(16),
+                          height: 200,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Selecciona la cantidad',
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(height: 20),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      if (selectedQuantity > 1) {
+                                        setState(() {
+                                          selectedQuantity--;
+                                        });
+                                      }
+                                    },
+                                    icon: Icon(Icons.remove),
+                                  ),
+                                  Text(
+                                    selectedQuantity.toString(),
+                                    style: TextStyle(fontSize: 24),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        selectedQuantity++;
+                                      });
+                                    },
+                                    icon: Icon(Icons.add),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 20),
+                              ElevatedButton(
+                                onPressed: () async {
+                                  Navigator.pop(context);
+
+                                  try {
+                                    final response =
+                                        await ProductService().addToCart(
+                                      selectedQuantity,
+                                      widget.idUser,
+                                      widget.id,
+                                    );
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content: Text(response['message'])),
+                                    );
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content:
+                                            Text('Error al agregar al carrito'),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  }
+                                },
+                                child: Text('Añadir al carrito'),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  },
                 );
-                setState(() {
-                  isInCart = !isInCart;
-                });
               },
               icon: Icon(
                 Icons.shopping_cart_rounded,
-                color: isInCart ? mintGreen : Colors.white,
+                color: isInCart ? Colors.green : Colors.white,
               ),
             ),
             Text(
-              "Carrito",
+              "Agregar al carrito", // Texto debajo del ícono del carrito
               style: TextStyle(color: Colors.white),
             ),
           ],
@@ -119,25 +205,14 @@ class _ButtonsState extends State<Buttons> {
         Column(
           children: [
             IconButton(
-              onPressed: () {
-                toggleItem(
-                  isActive: isInMyList,
-                  addAction: AppData.addToMyList,
-                  removeAction: AppData.removeFromMyList,
-                  addMessage: '${widget.title} añadido a Mi Lista',
-                  removeMessage: '${widget.title} eliminado de Mi Lista',
-                );
-                setState(() {
-                  isInMyList = !isInMyList;
-                });
-              },
+              onPressed: () {},
               icon: Icon(
-                isInMyList ? Icons.check : Icons.add,
+                Icons.comment,
                 color: isInMyList ? mintGreen : Colors.white,
               ),
             ),
             Text(
-              "Mi lista",
+              "Agregar comentario",
               style: TextStyle(color: Colors.white),
             ),
           ],

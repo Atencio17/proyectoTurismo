@@ -18,21 +18,7 @@ class NavBarTop extends StatelessWidget {
         TextButton(
           onPressed: () {},
           child: Text(
-            "Actividades",
-            style: TextStyle(color: Colors.white, fontSize: 16),
-          ),
-        ),
-        TextButton(
-          onPressed: () {},
-          child: Text(
-            "Regalos",
-            style: TextStyle(color: Colors.white, fontSize: 16),
-          ),
-        ),
-        TextButton(
-          onPressed: () {},
-          child: Text(
-            "Mi lista",
+            "Filtros",
             style: TextStyle(color: Colors.white, fontSize: 16),
           ),
         ),

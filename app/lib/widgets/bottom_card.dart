@@ -7,13 +7,16 @@ class CustomBottomSheet extends StatelessWidget {
   final String description;
   final String imageUrl;
   final String precio;
-
+  final int id;
+  final int idUser;
   const CustomBottomSheet({
     Key? key,
     required this.title,
     required this.description,
     required this.imageUrl,
     required this.precio,
+    required this.id,
+    required this.idUser,
   }) : super(key: key);
 
   @override
@@ -86,6 +89,8 @@ class CustomBottomSheet extends StatelessWidget {
             description: description,
             imageUrl: imageUrl,
             precio: precio,
+            id: id,
+            idUser: idUser,
           ),
           SizedBox(height: 16),
           Divider(color: Colors.grey[600]),
@@ -99,6 +104,8 @@ class CustomBottomSheet extends StatelessWidget {
                       description: description,
                       imageUrl: imageUrl,
                       precio: precio,
+                      id: id,
+                      idUser: idUser,
                     ),
                   ));
             },

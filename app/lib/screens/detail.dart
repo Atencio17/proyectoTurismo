@@ -10,11 +10,15 @@ class DetailScreen extends StatefulWidget {
       required this.title,
       required this.description,
       required this.imageUrl,
-      required this.precio});
+      required this.precio,
+      required this.id,
+      required this.idUser});
   final String title;
   final String description;
   final String imageUrl;
   final String precio;
+  final int id;
+  final int idUser;
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -22,7 +26,9 @@ class DetailScreen extends StatefulWidget {
         description: description,
         imageUrl: imageUrl,
         title: title,
-        precio: precio);
+        precio: precio,
+        id: id,
+        idUser: idUser);
   }
 }
 
@@ -31,11 +37,15 @@ class _DetailScreen extends State<DetailScreen> {
   final String description;
   final String imageUrl;
   final String precio;
+  final int id;
+  final int idUser;
   _DetailScreen(
       {required this.title,
       required this.description,
       required this.imageUrl,
-      required this.precio});
+      required this.precio,
+      required this.id,
+      required this.idUser});
 
   void initState() {
     // TODO: implement initState
@@ -46,12 +56,14 @@ class _DetailScreen extends State<DetailScreen> {
   List<Product> listaConcatenada = [];
 
   void getData() async {
-    List<Product> auxG =
-        await ProductService().getProductsByCategory("Artesanía");
-    List<Product> auxA =
-        await ProductService().getProductsByCategory("Hamacas");
+    List<Product> auxF = await ProductService().getProductsByCategory("Frutas");
+    List<Product> auxV =
+        await ProductService().getProductsByCategory("Verduras");
+    List<Product> auxS =
+        await ProductService().getProductsByCategory("Semillas");
+    List<Product> auxC = await ProductService().getProductsByCategory("Carnes");
     setState(() {
-      listaConcatenada = auxA + auxG;
+      listaConcatenada = auxC + auxS + auxV + auxF;
       listaConcatenada.shuffle();
     });
   }
@@ -127,9 +139,11 @@ class _DetailScreen extends State<DetailScreen> {
                 description: description,
                 imageUrl: imageUrl,
                 precio: precio,
+                id: id,
+                idUser: idUser,
               ),
             ),
-            horizontalList("Categorias parecidas", listaConcatenada, 1),
+            horizontalList("Categorias parecidas", listaConcatenada, 1, idUser),
           ],
         ),
       ),

@@ -69,7 +69,7 @@ void main() {
     test('Lanza una excepción cuando la respuesta no es exitosa', () async {
       // Simula el comportamiento de un error
       final response = await mockClient.get(Uri.parse(
-          'http://192.168.20.29:3000/api/productos/categoria/invalid'));
+          'http://192.168.6.137:3000/api/productos/categoria/invalid'));
 
       if (response['statusCode'] != 200) {
         expect(() async => throw Exception('Error al cargar los productos'),

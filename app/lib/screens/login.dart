@@ -22,7 +22,13 @@ class _LoginFormState extends State<LoginForm> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text('Iniciar Sesión', style: TextStyle(color: Colors.white)),
+        title: Center(
+          child: Text('Iniciar sesión como comprador',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 29,
+                  fontWeight: FontWeight.bold)),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -31,10 +37,13 @@ class _LoginFormState extends State<LoginForm> {
             key: _formKey,
             child: Column(
               children: [
-                Image.asset(
-                  "assets/logo.png",
-                  height: 200,
-                  width: 200,
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Image.asset(
+                    "assets/logo.png",
+                    height: 200,
+                    width: 200,
+                  ),
                 ),
                 // Campo ID de Usuario
                 _buildTextFormField(
@@ -61,7 +70,11 @@ class _LoginFormState extends State<LoginForm> {
                           textStyle: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         onPressed: _handleLogin,
-                        child: Text('Iniciar Sesión'),
+                        child: Text(
+                          'Iniciar sesión',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
                       ),
                 const SizedBox(height: 16.0),
 
@@ -77,7 +90,10 @@ class _LoginFormState extends State<LoginForm> {
                   },
                   child: Text(
                     '¿No tienes una cuenta? Regístrate',
-                    style: TextStyle(color: mintGreen),
+                    style: TextStyle(
+                        color: mintGreen,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16),
                   ),
                 ),
               ],
@@ -113,7 +129,9 @@ class _LoginFormState extends State<LoginForm> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => HomePage(),
+              builder: (context) => HomePage(
+                id: idUsuario,
+              ),
             ),
           );
         } else {
